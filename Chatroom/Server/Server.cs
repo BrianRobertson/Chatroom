@@ -42,9 +42,5 @@ namespace Server
                 client.Send(message.Body);
             }
         }
-        private void Start()
-        {
-            //needed? I put this here. Is this in TcpListener class?
-        }
     }
 }
