@@ -11,11 +11,13 @@ namespace Server
         public Client sender;
         public string Body;
         public string UserId;
+        public DateTime messageTime;
         public Message(Client Sender, string Body)
         {
             sender = Sender;
             this.Body = Body;
             UserId = sender?.UserId;
+            messageTime = DateTime.Now;
         }
     }
 }
