@@ -13,25 +13,18 @@ namespace Client
     {
         TcpClient clientSocket;
         NetworkStream stream;
-        public bool clientActive;
-        //string chatName;
-
         public Client(string IP, int port)
         {
             this.clientSocket = new TcpClient();
             this.clientSocket.Connect(IPAddress.Parse(IP), port);
             this.stream = clientSocket.GetStream();
-            this.clientActive = true;
         }
         public void Chat()
         {
-            while (clientActive == true)
-            {
-                //Thread receiveThread = new Thread(new ThreadStart(Receive));
-                //receiveThread.Start();
-                Send();
-                Recieve();
-            }
+            Thread sendThread = new Thread(new ThreadStart(Send));
+            sendThread.Start();
+            Thread receiveThread = new Thread(new ThreadStart(Recieve));
+            receiveThread.Start();
         }
         public void Send()
         {

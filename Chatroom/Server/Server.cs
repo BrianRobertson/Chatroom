@@ -33,10 +33,9 @@ namespace Server
         }
         public void Run()
         {
+            Parallel.Invoke(AcceptClient, Respond);
             //Task.Run(() => AcceptClient());
             AcceptClient();
-            client.Recieve();
-            Respond();
             client.Recieve();
             Respond();
         }
@@ -49,9 +48,9 @@ namespace Server
                 Console.WriteLine("Connected");
                 NetworkStream stream = clientSocket.GetStream();
                 client = new Client(stream, clientSocket);
-                client.GetUserId();
+                string userId = client.GetUserId();
                 //add this client to dictionary here.
-                chatClients.Add(client.UserId, client);
+                chatClients.Add(client.userId, client);
             }
             catch (Exception e)
             {
@@ -70,7 +69,7 @@ namespace Server
             Message message = default(Message);
             if (messageQueue.TryDequeue(out message))
             {
-                client.Send(message.Body);
+                client.Send(message.body);
             }
         }
     }

@@ -14,6 +14,7 @@ namespace Server
         public string userId;
         public Nullable<DateTime> startChat;
         public Nullable<DateTime> endChat;
+
         public Client(NetworkStream Stream, TcpClient Client)
         {
             this.stream = Stream;
@@ -36,9 +37,9 @@ namespace Server
             Server.messageQueue.Enqueue(message);
             Console.WriteLine(recievedMessageString);//writes to console in server.
         }
-        public void GetUserId()
+        public string GetUserId()
         {
-            //char[] charsToTrim = { '\0' };
+            char[] charsToTrim = { '\0' };
             byte[] recievedMessage = new byte[256];
             try
             {
@@ -50,16 +51,28 @@ namespace Server
                 Console.WriteLine("New User Send/Receive Server Error" + e);
             }
             string requestedUserId = Encoding.ASCII.GetString(recievedMessage);
-            userId = ValidateUserID(requestedUserId);
-            // trim and prep the message somehow? recievedMessageString.Trim(charsToTrim);
+            requestedUserId = requestedUserId.Trim(charsToTrim);
+            bool validUserName = ValidateUserId(requestedUserId);
+            if (validUserName == true)
+            {
+                return requestedUserId;
+            }
+            else
+            {
+                return GetUserId();
+            }
         }
-        public string ValidateUserID(string requestedUserId)
+        public bool ValidateUserId(string requestedUserId)
         {
-            string validUserId;
-            //switch case to validate userID
-            validUserId = "hello";
-
-            return validUserId;
+            if (Server.chatClients.ContainsKey(requestedUserId))
+            {
+                Send("Your chosen chat name is not available. Please try again?");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
