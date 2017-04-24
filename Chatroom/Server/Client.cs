@@ -30,12 +30,15 @@ namespace Server
         }
         public void Recieve()
         {
-            byte[] recievedMessage = new byte[256];
-            stream.Read(recievedMessage, 0, recievedMessage.Length);
-            string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
-            Message message = new Message(null, recievedMessageString);
-            Server.messageQueue.Enqueue(message);
-            Console.WriteLine(recievedMessageString);//writes to console in server.
+            while (true)
+            {
+                byte[] recievedMessage = new byte[256];
+                stream.Read(recievedMessage, 0, recievedMessage.Length);
+                string recievedMessageString = Encoding.ASCII.GetString(recievedMessage);
+                Message message = new Message(null, recievedMessageString);
+                Server.messageQueue.Enqueue(message);
+                Console.WriteLine(recievedMessageString);//writes to console in server.
+            }
         }
         public string GetUserId()
         {

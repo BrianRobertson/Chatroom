@@ -36,7 +36,7 @@ namespace Server
             Parallel.Invoke(AcceptClient, Respond);
             //Task.Run(() => AcceptClient());
             AcceptClient();
-            client.Recieve();
+            //client.Recieve();
             Respond();
         }
         private void AcceptClient()
@@ -51,6 +51,10 @@ namespace Server
                 string userId = client.GetUserId();
                 //add this client to dictionary here.
                 chatClients.Add(client.userId, client);
+                Console.WriteLine(userId + " is added to chat this chat session.");
+                client.Send("Hi " + userId + ", Welcome to chat!");
+                Thread clientReceiveThread = new Thread(new ThreadStart(client.Recieve));
+                clientReceiveThread.Start();
             }
             catch (Exception e)
             {
@@ -66,10 +70,13 @@ namespace Server
         }
         private void Respond()
         {
-            Message message = default(Message);
-            if (messageQueue.TryDequeue(out message))
+            while (true)
             {
-                client.Send(message.body);
+                Message message = default(Message);
+                if (messageQueue.TryDequeue(out message))
+                {
+                    client.Send(message.body);
+                }
             }
         }
     }
